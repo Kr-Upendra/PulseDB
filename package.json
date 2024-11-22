@@ -1,17 +1,27 @@
 {
   "name": "pulsedb",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "nodemon"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "PulseDB: Powering the Heartbeat of Social Media. PulseDB is a great choice for your social media backend! The name conveys a sense of real-time data flow, which is crucial for social media platforms where interactions, posts, and updates happen continuously. It suggests both the heartbeat of user activity and a robust backend database system that handles this constant flow.",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
