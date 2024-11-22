@@ -6,9 +6,10 @@ const app = express();
 app.use(cors({ credentials: true }));
 
 app.get("/", (req: Request, res: Response) => {
-  res
-    .status(200)
-    .json({ status: "success", message: "Hello World from Express!" });
+  res.status(200).json({
+    status: "success",
+    message: "Base route for pulsedb backend application.",
+  });
 });
 
 export default app;
