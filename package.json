@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "PulseDB: Powering the Heartbeat of Social Media. PulseDB is a great choice for your social media backend! The name conveys a sense of real-time data flow, which is crucial for social media platforms where interactions, posts, and updates happen continuously. It suggests both the heartbeat of user activity and a robust backend database system that handles this constant flow.",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/mongoose": "^5.11.96",
@@ -19,6 +20,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
