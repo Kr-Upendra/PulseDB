@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express-serve-static-core";
 import { asyncHandler, ErrorHandler } from "../utils";
 import { UserModel } from "../models";
 
@@ -37,19 +37,18 @@ export const protect = asyncHandler(
       id: freshUser.id,
       email: freshUser.email,
       name: freshUser.name,
-      role: "user",
     };
 
-    req.user = user;
+    (req as any).user = user;
     next();
   }
 );
 
-export const restrictTo = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!roles.includes(req?.user?.role!)) {
-      return next(new ErrorHandler("You do not have access.", 403));
-    }
-    next();
-  };
-};
+// export const restrictTo = (...roles: string[]) => {
+//   return (req: Request, res: Response, next: NextFunction) => {
+//     if (!roles.includes(req?.user?.role!)) {
+//       return next(new ErrorHandler("You do not have access.", 403));
+//     }
+//     next();
+//   };
+// };
