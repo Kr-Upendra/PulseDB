@@ -1,7 +1,12 @@
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import { UserModel } from "../models";
-import { ILoginBody, IRegisterBody, ResponsePayload } from "utils";
+import {
+  generateToken,
+  ILoginBody,
+  IRegisterBody,
+  ResponsePayload,
+} from "../utils";
 
 export const registerUser = async (
   req: Request,
@@ -64,16 +69,31 @@ export const loginUser = async (
         message: "Invalid email or password.",
       });
 
-    const isPasswordCorrect = bcrypt.compare(password, user.password);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect)
       return res.status(400).json({
         status: "failed",
         message: "Invalid email or password.",
       });
 
+    const token = generateToken(user._id.toString(), user.email);
+
+    const data = {
+      user: { _id: user._id, name: user.name, email: user.email },
+      token,
+    };
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: parseInt("1d", 10) * 1000,
+      sameSite: "strict",
+    });
+
     return res.status(200).json({
       status: "success",
       message: "You are logged in successfully.",
+      data,
     });
   } catch (error) {
     return res.status(500).json({
