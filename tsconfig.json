@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
     "module": "NodeNext",
-    "baseUrl": "src",
-    "outDir": "dist",
+    "baseUrl": "./src",
+    "outDir": "./dist",
     "sourceMap": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

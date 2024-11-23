@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { userRoute } from "./routes";
 import { ErrorHandler } from "./utils";
 import { globalErrorHandler } from "./controllers";
+import { authRoute, userRoute } from "./routes";
 
 const app = express();
 
@@ -18,10 +18,13 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.use("/users", userRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
-  next(new ErrorHandler(`Can't find ${req.originalUrl} on this server.`, 404));
+  return next(
+    new ErrorHandler(`Can't find ${req.originalUrl} on this server.`, 404)
+  );
 });
 
 app.use(globalErrorHandler);

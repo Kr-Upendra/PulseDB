@@ -20,8 +20,8 @@ export const protect = asyncHandler(
         )
       );
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("doceded", decoded);
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    // console.log("doceded", decoded);
     // const freshUser = await UserModel.findById(decoded._id).exec();
 
     // if (!freshUser)

@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon"
+    "start": "nodemon",
+    "build": "tsc",
+    "prod": "NODE_ENV=production node dist/server.js",
+    "dev": "nodemon",
+    "start:prod": "tsc && NODE_ENV=production node dist/server.js"
   },
   "keywords": [],
   "author": "",
