@@ -1,80 +1,64 @@
 import bcrypt from "bcryptjs";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserModel } from "../models";
 import {
+  asyncHandler,
+  ErrorHandler,
   generateToken,
   ILoginBody,
   IRegisterBody,
   ResponsePayload,
 } from "../utils";
 
-export const registerUser = async (
-  req: Request,
-  res: Response<ResponsePayload>
-): Promise<any> => {
-  const { name, email, password }: IRegisterBody = req.body;
+export const registerUser = asyncHandler(
+  async (
+    req: Request,
+    res: Response<ResponsePayload>,
+    next: NextFunction
+  ): Promise<void> => {
+    const { name, email, password }: IRegisterBody = req.body;
+    if (!name || !email || !password) {
+      const err = new ErrorHandler("Invalid input.", 400);
+      return next(err);
+    }
 
-  if (!name || !email || !password)
-    return res.status(400).json({
-      status: "failed",
-      message: "Invalid input.",
-    });
-
-  try {
     const userAlreadyExists = await UserModel.findOne({ email });
-    if (userAlreadyExists)
-      return res.status(400).json({
-        status: "failed",
-        message: "User with email already exists.",
-      });
+    if (userAlreadyExists) {
+      return next(new ErrorHandler("User with email already exists.", 400));
+    }
 
     const hashedPassword = bcrypt.hashSync(password, 12);
-
     const user = await UserModel.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: "success",
-      message: "User register successfully.",
+      message: "User registered successfully.",
       data: { user: { _id: user._id, email: user.email, name: user.name } },
     });
-  } catch (error) {
-    return res.status(500).json({
-      status: "failed",
-      message: error?.message || "Something went wrong.",
-    });
   }
-};
+);
 
-export const loginUser = async (
-  req: Request,
-  res: Response<ResponsePayload>
-): Promise<any> => {
-  const { email, password }: ILoginBody = req.body;
+export const loginUser = asyncHandler(
+  async (
+    req: Request,
+    res: Response<ResponsePayload>,
+    next: NextFunction
+  ): Promise<void> => {
+    const { email, password }: ILoginBody = req.body;
+    if (!email || !password) {
+      return next(new ErrorHandler("Invalid input.", 400));
+    }
 
-  if (!email || !password)
-    return res.status(400).json({
-      status: "failed",
-      message: "Invalid input.",
-    });
-
-  try {
     const user = await UserModel.findOne({ email }).select("+password");
-    if (!user)
-      return res.status(400).json({
-        status: "failed",
-        message: "Invalid email or password.",
-      });
+    if (!user) return next(new ErrorHandler("Invalid email or password.", 400));
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect)
-      return res.status(400).json({
-        status: "failed",
-        message: "Invalid email or password.",
-      });
+      return next(new ErrorHandler("Invalid email or password.", 400));
 
     const token = generateToken(user._id.toString(), user.email);
 
@@ -90,15 +74,10 @@ export const loginUser = async (
       sameSite: "strict",
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: "success",
       message: "You are logged in successfully.",
       data,
     });
-  } catch (error) {
-    return res.status(500).json({
-      status: "failed",
-      message: error?.message || "Something went wrong.",
-    });
   }
-};
+);
