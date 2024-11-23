@@ -1,6 +1,7 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler, ErrorHandler } from "../utils";
+import { UserModel } from "../models";
 
 export const protect = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -20,52 +21,35 @@ export const protect = asyncHandler(
         )
       );
 
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    // console.log("doceded", decoded);
-    // const freshUser = await UserModel.findById(decoded._id).exec();
+    const secretKey = process.env.JWT_SECRET_KEY || "";
+    const decoded = jwt.verify(token, secretKey) as JwtPayload;
+    const freshUser = await UserModel.findById(decoded._id).exec();
 
-    // if (!freshUser)
-    //   return res.status(STATUS_CODES.UNAUTHORIZED).json({
-    //     status: "failed",
-    //     message: API_RESPONSE_MESSAGE.UNAUTHORIZED_ACCESS,
-    //   });
+    if (!freshUser)
+      return next(
+        new ErrorHandler(
+          "User not found. Please ensure the token is valid.",
+          401
+        )
+      );
 
-    // if (freshUser.changedPasswordAfter(decoded.iat))
-    //   return res.status(STATUS_CODES.UNAUTHORIZED).json({
-    //     status: "failed",
-    //     message: API_RESPONSE_MESSAGE.INVALID_CREDENTIALS,
-    //   });
+    const user = {
+      id: freshUser.id,
+      email: freshUser.email,
+      name: freshUser.name,
+      role: "user",
+    };
 
-    // const user = {
-    //   id: freshUser.id,
-    //   email: freshUser.email,
-    //   firstname: freshUser.firstName,
-    //   lastname: freshUser.lastName,
-    //   role: freshUser.userRole,
-    // };
-
-    // req.user = user;
+    req.user = user;
     next();
   }
 );
 
-// export const restrictTo = (...roles) => {
-//   return (req, res, next) => {
-//     if (!roles.includes(req?.user?.role)) {
-//       return res.status(STATUS_CODES.FORBIDDEN).json({
-//         status: "failed",
-//         message: API_RESPONSE_MESSAGE.UNAUTHORIZED_ACCESS,
-//       });
-//     }
-//     next();
-//   };
-// };
-
-// } catch (err) {
-//   console.log("error from middleware", err?.name);
-//   if (err?.name === "TokenExpiredError")
-//     return res.status(401).json({
-//       status: "failed",
-//       message: "Access denied due to expired token.",
-//     });
-// }
+export const restrictTo = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!roles.includes(req?.user?.role!)) {
+      return next(new ErrorHandler("You do not have access.", 403));
+    }
+    next();
+  };
+};

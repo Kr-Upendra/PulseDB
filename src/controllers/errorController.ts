@@ -47,7 +47,8 @@ export const globalErrorHandler = (
   if (process.env.NODE_ENV === "development") {
     developmentError(error, res);
   } else if (process.env.NODE_ENV === "production") {
-    let err = { ...error };
+    let err = { ...error, message: error.message };
+
     if (err.name === "JsonWebTokenError") err = handleJsonWebTokenError();
     if (err.name === "TokenExpiredError") err = handleTokenExpiredError();
     productionError(err, res);
