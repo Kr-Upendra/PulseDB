@@ -1,3 +1,3 @@
 export * from "./userRoute";
 export * from "./authRoute";
-export * from "./postRoute";
+export * from "./bookRoute";

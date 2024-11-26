@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { ErrorHandler } from "./utils";
 import { globalErrorHandler } from "./controllers";
-import { authRoute, postRoute, userRoute } from "./routes";
+import { authRouter, bookRouter, userRouter } from "./routes";
 
 const app = express();
 
@@ -18,9 +18,9 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
-app.use("/api/posts", postRoute);
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use("/api/posts", bookRouter);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   return next(

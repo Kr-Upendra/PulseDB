@@ -18,7 +18,7 @@ export const createBook = asyncHandler(
 
     res.status(201).json({
       status: "failed",
-      message: "New post created.",
+      message: "New book added.",
     });
   }
 );

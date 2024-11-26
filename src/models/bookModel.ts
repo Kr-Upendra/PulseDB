@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const bookSchema = new Schema(
   {
@@ -25,6 +25,11 @@ const bookSchema = new Schema(
     genre: { type: String },
     stock: { type: Number, default: 0, min: 0 },
     releaseYear: { type: Number, min: 500, max: new Date().getFullYear() + 5 },
+    addedBy: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

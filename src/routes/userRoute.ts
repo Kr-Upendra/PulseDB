@@ -1,6 +1,8 @@
 import { protect } from "../middlewares";
 import { getProfile } from "../controllers";
 import express from "express";
-export const userRoute = express.Router();
+const router = express.Router();
 
-userRoute.route("/profile").get(protect, getProfile);
+router.route("/profile").get(protect, getProfile);
+
+export { router as userRouter };

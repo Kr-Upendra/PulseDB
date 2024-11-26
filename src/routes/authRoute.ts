@@ -1,6 +1,8 @@
 import { loginUser, registerUser } from "../controllers";
 import express from "express";
-export const authRoute = express.Router();
+const router = express.Router();
 
-authRoute.route("/register").post(registerUser);
-authRoute.route("/login").post(loginUser);
+router.route("/register").post(registerUser);
+router.route("/login").post(loginUser);
+
+export { router as authRouter };
