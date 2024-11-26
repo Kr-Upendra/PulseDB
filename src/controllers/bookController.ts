@@ -6,6 +6,7 @@ import {
   CustomRequest,
   ErrorHandler,
   ICreateBookData,
+  IUpdateBookData,
 } from "../utils";
 
 export const createBook = asyncHandler(
@@ -56,7 +57,64 @@ export const createBook = asyncHandler(
 
     res.status(201).json({
       status: "success",
-      message: "New book added.",
+      message: "New book added successfully.",
+    });
+  }
+);
+
+export const updateBook = asyncHandler(
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const {
+      title,
+      description,
+      author,
+      price,
+      genre,
+      poster,
+      releaseYear,
+      stock,
+      pages,
+      language,
+    }: ICreateBookData = req.body;
+
+    const { bookId } = req.params;
+
+    const existingBook = await BookModel.findById(bookId);
+    if (!existingBook) {
+      return next(new ErrorHandler("Book not found.", 404));
+    }
+
+    let slug = existingBook.slug;
+    if (title && title !== existingBook.title) slug = createSlug(title);
+
+    const updatedData: any = {
+      title: title || existingBook.title,
+      slug,
+      description: description || existingBook.description,
+      author: author || existingBook.author,
+      price: price || existingBook.price,
+      genre: genre || existingBook.genre,
+      poster: poster || existingBook.poster,
+      releaseYear: releaseYear || existingBook.releaseYear,
+      stock: stock || existingBook.stock,
+      pages: pages || existingBook.pages,
+      language: language || existingBook.language,
+      updatedBy: req.user.id,
+    };
+
+    const updatedBook = await BookModel.findByIdAndUpdate(bookId, updatedData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedBook) {
+      return next(new ErrorHandler("Failed to update the book.", 500));
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Book updated successfully.",
+      data: updatedBook,
     });
   }
 );

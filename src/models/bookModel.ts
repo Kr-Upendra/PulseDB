@@ -32,8 +32,26 @@ const bookSchema = new Schema(
       ref: "User",
       required: true,
     },
+    updatedBy: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: false,
+    },
   },
   { timestamps: true }
 );
 
 export const BookModel = model("Book", bookSchema);
+
+/*
+
+"description": "Pride and Prejudice, written by Jane Austen, is a romantic novel that follows the turbulent relationship between Elizabeth Bennet and the wealthy, aloof Mr. Darcy. The novel addresses issues of class, marriage, and societal expectations.",
+    "author": "Test Author",
+    "price": 249,
+    "genre": "test",
+    "releaseYear": 2024,
+    "stock": 50,
+    "language": "Hindi",
+    "pages": 100
+
+*/
