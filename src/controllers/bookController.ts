@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import { BookModel } from "../models";
 import {
   asyncHandler,
@@ -62,6 +62,66 @@ export const createBook = asyncHandler(
   }
 );
 
+export const getBooks = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = limit * (page - 1);
+    const search = req.query.search || "";
+    const author = req.query.author || "";
+    const genre = req.query.genre || "";
+    const language = req.query.language || "";
+
+    let searchQuery: any = {};
+    if (search) searchQuery["title"] = { $regex: search, $options: "i" };
+    if (author) searchQuery["author"] = { $regex: author, $options: "i" };
+    if (genre) searchQuery["genre"] = { $regex: genre, $options: "i" };
+    if (language) searchQuery["language"] = { $regex: language, $options: "i" };
+
+    const books = await BookModel.find(searchQuery)
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit)
+      .populate("addedBy", "fullName email role profile")
+      .populate("updatedBy", "fullName email role profile");
+
+    const bookCount = await BookModel.countDocuments(searchQuery);
+    const totalPage = Math.ceil(bookCount / limit);
+    const hasNextPage = page < totalPage;
+
+    const pagination = {
+      totalRecords: bookCount,
+      currentPage: page,
+      limit,
+      totalPage,
+      hasNextPage,
+    };
+
+    res.status(200).json({
+      status: "success",
+      message: "Book found.",
+      data: { books, pagination },
+    });
+  }
+);
+
+export const getBook = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { bookId } = req.params;
+    const book = await BookModel.findById(bookId)
+      .populate("addedBy", "fullName email role profile")
+      .populate("updatedBy", "fullName email role profile");
+
+    if (!book) return next(new ErrorHandler("Book not found.", 404));
+
+    res.status(200).json({
+      status: "success",
+      message: "Book found.",
+      data: { book },
+    });
+  }
+);
+
 export const updateBook = asyncHandler(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
     const {
@@ -75,7 +135,7 @@ export const updateBook = asyncHandler(
       stock,
       pages,
       language,
-    }: ICreateBookData = req.body;
+    }: IUpdateBookData = req.body;
 
     const { bookId } = req.params;
 
@@ -115,6 +175,20 @@ export const updateBook = asyncHandler(
       status: "success",
       message: "Book updated successfully.",
       data: updatedBook,
+    });
+  }
+);
+
+export const deleteBook = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { bookId } = req.params;
+    const isBookDeleted = await BookModel.findByIdAndDelete(bookId);
+
+    if (!isBookDeleted) return next(new ErrorHandler("Book not found.", 404));
+
+    res.status(200).json({
+      status: "success",
+      message: "Book deleted successfully.",
     });
   }
 );
