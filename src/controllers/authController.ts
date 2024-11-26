@@ -74,8 +74,6 @@ export const loginUser = asyncHandler(
       token,
     };
 
-    console.log("data", data);
-
     res.status(200).json({
       status: "success",
       message: "You are logged in successfully.",

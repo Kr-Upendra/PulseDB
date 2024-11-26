@@ -1,5 +1,6 @@
 import { Response } from "express";
 import jwt from "jsonwebtoken";
+import slugify from "slugify";
 
 export const generateToken = (
   id: string,
@@ -21,4 +22,8 @@ export const generateToken = (
   });
 
   return token;
+};
+
+export const createSlug = (str: string) => {
+  return slugify(str, { replacement: "-", lower: true, trim: true });
 };

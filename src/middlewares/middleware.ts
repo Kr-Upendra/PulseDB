@@ -15,10 +15,7 @@ export const protect = asyncHandler(
 
     if (!token)
       return next(
-        new ErrorHandler(
-          "You are not logged! Please log in to get access!",
-          401
-        )
+        new ErrorHandler("You are not logged! Please log in again.", 401)
       );
 
     const secretKey = process.env.JWT_SECRET_KEY || "";
@@ -57,7 +54,12 @@ export const protect = asyncHandler(
 export const restrictTo = (...roles: string[]) => {
   return (req: CustomRequest, res: Response, next: NextFunction) => {
     if (!roles.includes(req?.user?.role!)) {
-      return next(new ErrorHandler("You do not have access.", 403));
+      return next(
+        new ErrorHandler(
+          "You do not have the necessary permissions to access this resource.",
+          403
+        )
+      );
     }
     next();
   };
