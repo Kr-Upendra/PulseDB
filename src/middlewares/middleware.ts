@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express-serve-static-core";
+import { NextFunction, Response } from "express-serve-static-core";
 import { asyncHandler, CustomRequest, ErrorHandler } from "../utils";
 import { UserModel } from "../models";
 
@@ -33,10 +33,20 @@ export const protect = asyncHandler(
         )
       );
 
+    if (!freshUser.isActive) {
+      return next(
+        new ErrorHandler(
+          "Your account has been deleted or deactivated. Please contact support if you believe this is an error.",
+          400
+        )
+      );
+    }
+
     const user = {
       id: freshUser.id,
       email: freshUser.email,
-      name: freshUser.name,
+      name: freshUser.fullName,
+      role: freshUser.role,
     };
 
     req.user = user;

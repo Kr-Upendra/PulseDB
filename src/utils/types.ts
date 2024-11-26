@@ -7,7 +7,7 @@ export interface ResponsePayload {
 }
 
 export interface IRegisterBody {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
 }

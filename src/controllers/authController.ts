@@ -16,8 +16,8 @@ export const registerUser = asyncHandler(
     res: Response<ResponsePayload>,
     next: NextFunction
   ): Promise<void> => {
-    const { name, email, password }: IRegisterBody = req.body;
-    if (!name || !email || !password) {
+    const { fullName, email, password }: IRegisterBody = req.body;
+    if (!fullName || !email || !password) {
       const err = new ErrorHandler("Invalid input.", 400);
       return next(err);
     }
@@ -28,16 +28,17 @@ export const registerUser = asyncHandler(
     }
 
     const hashedPassword = bcrypt.hashSync(password, 12);
-    const user = await UserModel.create({
-      name,
+    const newUser = new UserModel({
+      fullName,
       email,
       password: hashedPassword,
     });
 
+    await newUser.save();
+
     res.status(200).json({
       status: "success",
       message: "User registered successfully.",
-      data: { user: { _id: user._id, email: user.email, name: user.name } },
     });
   }
 );
@@ -60,19 +61,20 @@ export const loginUser = asyncHandler(
     if (!isPasswordCorrect)
       return next(new ErrorHandler("Invalid email or password.", 400));
 
-    const token = generateToken(user._id.toString(), user.email);
+    const token = generateToken(user._id.toString(), user.email, res);
 
     const data = {
-      user: { _id: user._id, name: user.name, email: user.email },
+      user: {
+        _id: user._id,
+        name: user.fullName,
+        profile: user.profile,
+        email: user.email,
+        role: user.role,
+      },
       token,
     };
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: parseInt("1d", 10) * 1000,
-      sameSite: "strict",
-    });
+    console.log("data", data);
 
     res.status(200).json({
       status: "success",

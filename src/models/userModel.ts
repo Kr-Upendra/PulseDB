@@ -13,10 +13,17 @@ const userSchema = new Schema(
       lowercase: true,
       unique: true,
     },
-    profile: { type: String },
+    profile: { type: String, default: "" },
     phoneNumber: {
       type: String,
       unique: true,
+      validate: {
+        validator: function (value: string) {
+          return value ? true : true;
+        },
+        message: "Phone number is already in use",
+      },
+      required: false,
     },
     password: {
       type: String,
@@ -40,5 +47,7 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+userSchema.index({ phoneNumber: 1 }, { unique: true, sparse: true });
 
 export const UserModel = model("User", userSchema);

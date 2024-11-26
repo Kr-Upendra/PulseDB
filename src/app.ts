@@ -20,7 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
-app.use("/api/posts", bookRouter);
+app.use("/api/books", bookRouter);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   return next(
