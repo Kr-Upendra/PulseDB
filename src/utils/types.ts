@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export interface ResponsePayload {
   status: string;
   message: string;
@@ -13,4 +15,8 @@ export interface IRegisterBody {
 export interface ILoginBody {
   email: string;
   password: string;
+}
+
+export interface CustomRequest extends Request {
+  user?: any;
 }
