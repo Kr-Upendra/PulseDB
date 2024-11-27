@@ -145,3 +145,31 @@ This will start the server on http://localhost:8000 (or another port if configur
       ```
 
       Replace <jwt_token_here> with the token you received during login.
+
+### User Routes
+
+3. <b>GET /api/users/profile</b>
+
+   - <b>Description</b>: Retrieve the profile information of the currently authenticated user.
+   - <b>Authorization</b>: Requires a valid JWT token in the Authorization header (Bearer <token>).
+   - <b>Response</b>: Returns the user's profile details:
+
+     ```json
+     {
+       "status": "success",
+       "message": "Get user profile.",
+       "data": {
+         "user": {
+           "_id": "6745b2e9f700f072642a7c7",
+           "fullName": "Mrs. Stacey O'Connell",
+           "email": "marietta.vonrueden10@gmail.com",
+           "profile": "",
+           "role": "customer",
+           "isActive": true,
+           "createdAt": "2024-11-26T11:37:13.732Z",
+           "updatedAt": "2024-11-26T11:37:13.732Z",
+           "__v": 0
+         }
+       }
+     }
+     ```
