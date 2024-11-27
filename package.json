@@ -3,16 +3,15 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon",
-    "build": "tsc",
-    "prod": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon",
-    "start:prod": "tsc && NODE_ENV=production node dist/server.js"
+    "start": "tsc && NODE_ENV=production node dist/server.js",
+    "build": "tsc",
+    "prod": "NODE_ENV=production node dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "PulseDB: Powering the Heartbeat of Social Media. PulseDB is a great choice for your social media backend! The name conveys a sense of real-time data flow, which is crucial for social media platforms where interactions, posts, and updates happen continuously. It suggests both the heartbeat of user activity and a robust backend database system that handles this constant flow.",
+  "description": "Pulsedb is a powerful and scalable backend solution designed to manage book data, built with modern web technologies including Node.js, Express, MongoDB, and TypeScript. With a focus on performance and ease of use, pulsedb provides a robust API to manage books, authors, genres, and other related resources efficiently. The API is designed for flexibility, making it easy to integrate with various front-end frameworks and applications.",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
