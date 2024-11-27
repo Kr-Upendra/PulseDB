@@ -15,6 +15,11 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     status: "success",
     message: "Base route for pulsedb backend application.",
+    data: {
+      accessAuthRoutes: "/api/auth/",
+      accessUserRoutes: "/api/users/",
+      accessBookRoutes: "/api/books",
+    },
   });
 });
 
